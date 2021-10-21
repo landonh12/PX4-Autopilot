@@ -82,6 +82,7 @@ void ManualControl::Run()
 
 		_stick_arm_hysteresis.set_hysteresis_time_from(false, _param_rc_arm_hyst.get() * 1_ms);
 		_stick_disarm_hysteresis.set_hysteresis_time_from(false, _param_rc_arm_hyst.get() * 1_ms);
+		_stick_kill_hysteresis.set_hysteresis_time_from(false, 10_s);
 		_button_hysteresis.set_hysteresis_time_from(false, _param_rc_arm_hyst.get() * 1_ms);
 
 		_selector.setRcInMode(_param_com_rc_in_mode.get());
@@ -254,6 +255,7 @@ void ManualControl::Run()
 		_r_diff.reset();
 		_stick_arm_hysteresis.set_state_and_update(false, now);
 		_stick_disarm_hysteresis.set_state_and_update(false, now);
+		_stick_kill_hysteresis.set_state_and_update(false, now);
 		_button_hysteresis.set_state_and_update(false, now);
 	}
 
@@ -269,23 +271,33 @@ void ManualControl::processStickArming(const manual_control_input_s &input)
 {
 	// Arm gesture
 	const bool right_stick_centered = (fabsf(input.x) < 0.1f) && (fabsf(input.y) < 0.1f);
-	const bool stick_lower_right = (input.z < 0.1f) && (input.r > 0.9f);
+	const bool left_stick_lower_right = (input.z < 0.1f) && (input.r > 0.9f);
 
 	const bool previous_stick_arm_hysteresis = _stick_arm_hysteresis.get_state();
-	_stick_arm_hysteresis.set_state_and_update(stick_lower_right && right_stick_centered, input.timestamp);
+	_stick_arm_hysteresis.set_state_and_update(left_stick_lower_right && right_stick_centered, input.timestamp);
 
 	if (!previous_stick_arm_hysteresis && _stick_arm_hysteresis.get_state()) {
 		sendActionRequest(action_request_s::ACTION_ARM, action_request_s::SOURCE_RC_STICK_GESTURE);
 	}
 
 	// Disarm gesture
-	const bool stick_lower_left = (input.z < 0.1f) && (input.r < -0.9f);
+	const bool left_stick_lower_left = (input.z < 0.1f) && (input.r < -0.9f);
 
 	const bool previous_stick_disarm_hysteresis = _stick_disarm_hysteresis.get_state();
-	_stick_disarm_hysteresis.set_state_and_update(stick_lower_left && right_stick_centered, input.timestamp);
+	_stick_disarm_hysteresis.set_state_and_update(left_stick_lower_left && right_stick_centered, input.timestamp);
 
 	if (!previous_stick_disarm_hysteresis && _stick_disarm_hysteresis.get_state()) {
 		sendActionRequest(action_request_s::ACTION_DISARM, action_request_s::SOURCE_RC_STICK_GESTURE);
+	}
+
+	// Kill gesture
+	const bool right_stick_lower_right = (input.x < -0.9f) && (input.y > 0.9f);
+
+	const bool previous_stick_kill_hysteresis = _stick_kill_hysteresis.get_state();
+	_stick_kill_hysteresis.set_state_and_update(left_stick_lower_left && right_stick_lower_right, input.timestamp);
+
+	if (!previous_stick_kill_hysteresis && _stick_kill_hysteresis.get_state()) {
+		sendActionRequest(action_request_s::ACTION_KILL, action_request_s::SOURCE_RC_STICK_GESTURE);
 	}
 }
 

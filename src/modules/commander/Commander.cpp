@@ -2464,7 +2464,7 @@ Commander::run()
 					break;
 
 				case action_request_s::ACTION_UNKILL:
-					if (arm_disarm_reason == arm_disarm_reason_t::rc_switch && _armed.manual_lockdown) {
+					if (_armed.manual_lockdown) {
 						mavlink_log_info(&_mavlink_log_pub, "Kill-switch disengaged\t");
 						events::send(events::ID("commander_kill_sw_disengaged"), events::Log::Info, "Kill-switch disengaged");
 						_status_changed = true;
@@ -2474,7 +2474,7 @@ Commander::run()
 					break;
 
 				case action_request_s::ACTION_KILL:
-					if (arm_disarm_reason == arm_disarm_reason_t::rc_switch && !_armed.manual_lockdown) {
+					if (!_armed.manual_lockdown) {
 						const char kill_switch_string[] = "Kill-switch engaged\t";
 						events::LogLevels log_levels{events::Log::Info};
 
