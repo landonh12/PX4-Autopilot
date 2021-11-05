@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2012-2017 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2021 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,25 +32,56 @@
  ****************************************************************************/
 
 /**
- * @file drv_led.h
+ * @file led_states.hpp
  *
- * Led device API to control the external LED(s) via uORB interface
+ * Defines uORB over UAVCANv1 led_states subscriber
+ *
+ * @author Peter van der Perk <peter.vanderperk@nxp.com>
  */
 
 #pragma once
 
+#include <uORB/topics/led_states.h>
+#include <uORB/PublicationMulti.hpp>
 
-#include <uORB/topics/led_control.h>
+#include "../DynamicPortSubscriber.hpp"
 
-#include <board_config.h>
+class UORB_over_UAVCAN_led_states_Subscriber : public UavcanDynamicPortSubscriber
+{
+public:
+	UORB_over_UAVCAN_led_states_Subscriber(CanardInstance &ins, UavcanParamManager &pmgr, uint8_t instance = 0) :
+		UavcanDynamicPortSubscriber(ins, pmgr, "led_states", instance) { };
 
-// allow the board to override the number (or maxiumum number) of LED's it has
-#ifndef BOARD_MAX_LEDS
-#define BOARD_MAX_LEDS 4
-#endif
+	void subscribe() override
+	{
+		// Subscribe to messages uORB led_states payload over UAVCAN
+		canardRxSubscribe(&_canard_instance,
+				  CanardTransferKindMessage,
+				  _subj_sub._canard_sub.port_id,
+				  sizeof(struct led_states_s),
+				  CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC * 10000,
+				  &_subj_sub._canard_sub);
+	};
 
-static_assert(led_control_s::ORB_QUEUE_LENGTH >= BOARD_MAX_LEDS, "led_control_s::ORB_QUEUE_LENGTH too small");
+	void callback(const CanardTransfer &receive) override
+	{
+		PX4_INFO("uORB led_states Callback");
 
-#if BOARD_MAX_LEDS > 16 // because led_mask is uint8_t
-#error "BOARD_MAX_LEDS too large. You need to change the led_mask type in the led_control uorb topic (and where it's used)"
-#endif
+		if (receive.payload_size == sizeof(struct led_states_s)) {
+			led_states_s *led_states_msg = (led_states_s *)receive.payload;
+			led_states_msg->timestamp = hrt_absolute_time();
+
+			/* As long as we don't have timesync between nodes we set the timestamp to the current time */
+
+			_led_states_pub.publish(*led_states_msg);
+
+		} else {
+			PX4_ERR("uORB over UAVCAN %s playload size mismatch got %d expected %d",
+				_subj_sub._subject_name, receive.payload_size, sizeof(struct led_states_s));
+		}
+	};
+
+private:
+	uORB::PublicationMulti<led_states_s> _led_states_pub{ORB_ID(led_states)};
+
+};

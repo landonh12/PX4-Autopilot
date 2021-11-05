@@ -92,7 +92,7 @@ public:
 	int update(LedControlData &control_data);
 
 	static constexpr int BREATHE_INTERVAL = 25 * 1000; /**< single step when in breathe mode */
-	static constexpr int BREATHE_STEPS = 64; /**< number of steps in breathe mode for a full on-off cycle */
+	static constexpr int BREATHE_STEPS = 128; /**< number of steps in breathe mode for a full on-off cycle */
 
 	static constexpr int BLINK_FAST_DURATION = 100 * 1000; /**< duration of half a blinking cycle
 									(on-to-off and off-to-on) in us */
@@ -188,7 +188,7 @@ private:
 
 	perf_counter_t _led_control_sub_lost_perf{perf_alloc(PC_COUNT, MODULE_NAME": led_control message missed")};
 
-	uint8_t _max_brightness{UINT8_MAX};
+	uint8_t _max_brightness{64};
 
 	bool _force_update{true}; ///< force an orb_copy in the beginning
 	bool _breathe_enabled{false}; ///< true if at least one of the led's is currently in breathe mode

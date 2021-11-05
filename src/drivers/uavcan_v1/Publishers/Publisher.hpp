@@ -72,6 +72,7 @@ public:
 
 	void updateParam()
 	{
+		printf("Params updating..\n");
 		char uavcan_param[256];
 		snprintf(uavcan_param, sizeof(uavcan_param), "uavcan.pub.%s.%d.id", _subject_name, _instance);
 
@@ -79,6 +80,7 @@ public:
 		uavcan_register_Value_1_0 value;
 
 		if (_param_manager.GetParamByName(uavcan_param, value)) {
+			printf("Getting Param By Name");
 			uint16_t new_id = value.natural16.value.elements[0];
 
 			if (_port_id != new_id) {

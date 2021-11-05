@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2012-2017 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2018 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,26 +31,66 @@
  *
  ****************************************************************************/
 
-/**
- * @file drv_led.h
- *
- * Led device API to control the external LED(s) via uORB interface
- */
-
 #pragma once
 
-
+#include <px4_platform_common/module.h>
+#include <px4_platform_common/module_params.h>
+#include <uORB/Publication.hpp>
+#include <uORB/SubscriptionInterval.hpp>
+#include <uORB/topics/parameter_update.h>
+#include <uORB/topics/led_states.h>
 #include <uORB/topics/led_control.h>
 
-#include <board_config.h>
+using namespace time_literals;
 
-// allow the board to override the number (or maxiumum number) of LED's it has
-#ifndef BOARD_MAX_LEDS
-#define BOARD_MAX_LEDS 4
-#endif
+extern "C" __EXPORT int led_state_module_main(int argc, char *argv[]);
 
-static_assert(led_control_s::ORB_QUEUE_LENGTH >= BOARD_MAX_LEDS, "led_control_s::ORB_QUEUE_LENGTH too small");
 
-#if BOARD_MAX_LEDS > 16 // because led_mask is uint8_t
-#error "BOARD_MAX_LEDS too large. You need to change the led_mask type in the led_control uorb topic (and where it's used)"
-#endif
+class LedStateModule : public ModuleBase<LedStateModule>, public ModuleParams
+{
+public:
+	LedStateModule(int example_param, bool example_flag);
+
+	virtual ~LedStateModule() = default;
+
+	/** @see ModuleBase */
+	static int task_spawn(int argc, char *argv[]);
+
+	/** @see ModuleBase */
+	static LedStateModule *instantiate(int argc, char *argv[]);
+
+	/** @see ModuleBase */
+	static int custom_command(int argc, char *argv[]);
+
+	/** @see ModuleBase */
+	static int print_usage(const char *reason = nullptr);
+
+	/** @see ModuleBase::run() */
+	void run() override;
+
+	/** @see ModuleBase::print_status() */
+	int print_status() override;
+
+private:
+
+	/**
+	 * Check for parameter changes and update them if needed.
+	 * @param parameter_update_sub uorb subscription to parameter_update
+	 * @param force for a parameter update
+	 */
+	void parameters_update(bool force = false);
+
+
+	DEFINE_PARAMETERS(
+		(ParamInt<px4::params::SYS_AUTOSTART>) _param_sys_autostart,   /**< example parameter */
+		(ParamInt<px4::params::SYS_AUTOCONFIG>) _param_sys_autoconfig  /**< another parameter */
+	)
+
+	// Subscriptions
+	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
+
+	uORB::Publication<led_control_s> _led_control_pub{ORB_ID(led_control)};
+	uORB::Subscription _led_states_sub{ORB_ID(led_states)};
+
+};
+

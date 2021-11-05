@@ -67,7 +67,7 @@ static void run_led_test1()
 	PX4_INFO("generating LED pattern...");
 
 	led_control_s led_control = {};
-	led_control.led_mask = 0xff;
+	led_control.led_mask = 0xffff;
 	led_control.mode = led_control_s::MODE_OFF;
 	led_control.priority = led_control_s::MAX_PRIORITY;
 	publish_led_control(led_control);
@@ -85,7 +85,7 @@ static void run_led_test1()
 		}
 
 		px4_usleep(100 * 1000);
-		led_control.led_mask = 0xff;
+		led_control.led_mask = 0xffff;
 
 		for (int i = 0; i < 3; ++i) {
 			led_control.mode = led_control_s::MODE_ON;
@@ -102,7 +102,7 @@ static void run_led_test1()
 	px4_usleep(500 * 1000);
 
 	// reset
-	led_control.led_mask = 0xff;
+	led_control.led_mask = 0xffff;
 	led_control.mode = led_control_s::MODE_DISABLED;
 	publish_led_control(led_control);
 
@@ -120,7 +120,7 @@ led_control_main(int argc, char *argv[])
 	led_control.num_blinks = 3;
 	led_control.priority = led_control_s::MAX_PRIORITY;
 	led_control.mode = 0xff;
-	led_control.led_mask = 0xff;
+	led_control.led_mask = 0xffff;
 	led_control.color = led_control_s::COLOR_WHITE;
 
 	while ((ch = px4_getopt(argc, argv, "c:l:n:s:p:", &myoptind, &myoptarg)) != EOF) {

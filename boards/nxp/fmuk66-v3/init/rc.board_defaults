@@ -5,4 +5,4 @@
 
 rgbled_pwm start
 safety_button start
-
+ifup can0

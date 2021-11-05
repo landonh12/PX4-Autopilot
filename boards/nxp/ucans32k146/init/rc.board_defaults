@@ -4,3 +4,7 @@
 #------------------------------------------------------------------------------
 
 pwm_out mode_pwm1 start
+
+apa102 start -n 10
+led_state_module start
+led_control_example

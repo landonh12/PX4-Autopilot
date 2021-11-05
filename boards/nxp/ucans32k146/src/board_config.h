@@ -117,6 +117,8 @@ __BEGIN_DECLS
 #define LED_TIM0_CH1OUT   /* PTD16  RGB_G */ PIN_FTM0_CH1_3
 #define LED_TIM0_CH2OUT   /* PTD0   RGB_B */ PIN_FTM0_CH2_3
 
+#define BOARD_MAX_LEDS 16
+
 /****************************************************************************
  * Public Types
  ****************************************************************************/

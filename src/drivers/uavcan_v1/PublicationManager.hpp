@@ -64,13 +64,18 @@
 #define CONFIG_UAVCAN_V1_UORB_SENSOR_GPS_PUBLISHER 0
 #endif
 
+#ifndef CONFIG_UAVCAN_V1_UORB_LED_STATES_PUBLISHER
+#define CONFIG_UAVCAN_V1_UORB_LED_STATES_PUBLISHER 0
+#endif
+
 /* Preprocessor calculation of publisher count */
 
 #define UAVCAN_PUB_COUNT CONFIG_UAVCAN_V1_GNSS_PUBLISHER + \
 	CONFIG_UAVCAN_V1_ESC_CONTROLLER + \
 	CONFIG_UAVCAN_V1_READINESS_PUBLISHER + \
 	CONFIG_UAVCAN_V1_UORB_ACTUATOR_OUTPUTS_PUBLISHER + \
-	CONFIG_UAVCAN_V1_UORB_SENSOR_GPS_PUBLISHER
+	CONFIG_UAVCAN_V1_UORB_SENSOR_GPS_PUBLISHER + \
+	CONFIG_UAVCAN_V1_UORB_LED_STATES_PUBLISHER
 
 #include <px4_platform_common/defines.h>
 #include <drivers/drv_hrt.h>
@@ -79,6 +84,7 @@
 
 #include <uORB/topics/actuator_outputs.h>
 #include <uORB/topics/sensor_gps.h>
+#include <uORB/topics/led_states.h>
 
 #include "Actuators/EscClient.hpp"
 #include "Publishers/DS-015/Readiness.hpp"
@@ -146,7 +152,7 @@ private:
 			{
 				return new uORB_over_UAVCAN_Publisher<actuator_outputs_s>(ins, pmgr, ORB_ID(actuator_outputs));
 			},
-			"uorb.actuator_outputs",
+			"actuator_outputs",
 			0
 		},
 #endif
@@ -157,6 +163,16 @@ private:
 				return new uORB_over_UAVCAN_Publisher<sensor_gps_s>(ins, pmgr, ORB_ID(sensor_gps));
 			},
 			"uorb.sensor_gps",
+			0
+		},
+#endif
+#if CONFIG_UAVCAN_V1_UORB_LED_STATES_PUBLISHER
+		{
+			[](CanardInstance & ins, UavcanParamManager & pmgr) -> UavcanPublisher *
+			{
+				return new uORB_over_UAVCAN_Publisher<led_states_s>(ins, pmgr, ORB_ID(led_states));
+			},
+			"led_states",
 			0
 		},
 #endif

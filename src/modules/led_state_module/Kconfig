@@ -1,0 +1,5 @@
+menuconfig MODULES_LED_STATE_MODULE
+	bool "led_state_module"
+	default n
+	---help---
+		Enable support for led_state_module
