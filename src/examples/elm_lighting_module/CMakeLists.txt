@@ -31,9 +31,9 @@
 #
 ############################################################################
 px4_add_module(
-	MODULE examples__led_control_example
-	MAIN led_control_example
+	MODULE examples__elm_lighting_module
+	MAIN elm_lighting_module
 	SRCS
-		led_control_example.c
+		elm_lighting_module.c
 	DEPENDS
 	)

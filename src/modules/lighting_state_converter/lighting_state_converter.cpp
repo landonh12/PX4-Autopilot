@@ -31,7 +31,7 @@
  *
  ****************************************************************************/
 
-#include "led_state_module.h"
+#include "lighting_state_converter.h"
 
 #include <px4_platform_common/getopt.h>
 #include <px4_platform_common/log.h>
@@ -41,7 +41,7 @@
 #include <uORB/topics/sensor_combined.h>
 
 
-int LedStateModule::print_status()
+int LightingStateConverter::print_status()
 {
 	PX4_INFO("Running");
 	// TODO: print additional runtime information about the state of the module
@@ -49,7 +49,7 @@ int LedStateModule::print_status()
 	return 0;
 }
 
-int LedStateModule::custom_command(int argc, char *argv[])
+int LightingStateConverter::custom_command(int argc, char *argv[])
 {
 	/*
 	if (!is_running()) {
@@ -68,7 +68,7 @@ int LedStateModule::custom_command(int argc, char *argv[])
 }
 
 
-int LedStateModule::task_spawn(int argc, char *argv[])
+int LightingStateConverter::task_spawn(int argc, char *argv[])
 {
 	_task_id = px4_task_spawn_cmd("module",
 				      SCHED_DEFAULT,
@@ -85,7 +85,7 @@ int LedStateModule::task_spawn(int argc, char *argv[])
 	return 0;
 }
 
-LedStateModule *LedStateModule::instantiate(int argc, char *argv[])
+LightingStateConverter *LightingStateConverter::instantiate(int argc, char *argv[])
 {
 	int example_param = 0;
 	bool example_flag = false;
@@ -121,7 +121,7 @@ LedStateModule *LedStateModule::instantiate(int argc, char *argv[])
 		return nullptr;
 	}
 
-	LedStateModule *instance = new LedStateModule(example_param, example_flag);
+	LightingStateConverter *instance = new LightingStateConverter(example_param, example_flag);
 
 	if (instance == nullptr) {
 		PX4_ERR("alloc failed");
@@ -130,18 +130,18 @@ LedStateModule *LedStateModule::instantiate(int argc, char *argv[])
 	return instance;
 }
 
-LedStateModule::LedStateModule(int example_param, bool example_flag)
+LightingStateConverter::LightingStateConverter(int example_param, bool example_flag)
 	: ModuleParams(nullptr)
 {
 }
 
-void LedStateModule::run()
+void LightingStateConverter::run()
 {
 	// Example: run the loop synchronized to the sensor_combined topic publication
-	int led_states_sub = orb_subscribe(ORB_ID(led_states));
+	int lighting_states_sub = orb_subscribe(ORB_ID(lighting_states));
 
 	px4_pollfd_struct_t fds[1];
-	fds[0].fd = led_states_sub;
+	fds[0].fd = lighting_states_sub;
 	fds[0].events = POLLIN;
 
 	// initialize parameters
@@ -164,38 +164,38 @@ void LedStateModule::run()
 
 		} else if (fds[0].revents & POLLIN) {
 
-			struct led_states_s led_states;
-			orb_copy(ORB_ID(led_states), led_states_sub, &led_states);
+			struct lighting_states_s lighting_states;
+			orb_copy(ORB_ID(lighting_states), lighting_states_sub, &lighting_states);
 			// TODO: do something with the data...
 
 			for (int i = 0; i < 2; i++) {
-				if (led_states.state[i] != 255) {
+				if (lighting_states.state[i] != 255) {
 					led_control_s led_control;
 					if(i == 0) led_control.led_mask = 0b0000001111000001;
 					if(i == 1) led_control.led_mask = 0b0000000000111110;
 
-					if (led_states.state[i] == 0) {
+					if (lighting_states.state[i] == 0) {
 						led_control.color = led_control_s::COLOR_DIM_RED;
 						led_control.mode = led_control_s::MODE_ON;
 					}
 
-					if (led_states.state[i] == 1) {
+					if (lighting_states.state[i] == 1) {
 						led_control.color = led_control_s::COLOR_RED;
 						led_control.mode = led_control_s::MODE_ON;
 					}
 
-					if (led_states.state[i] == 2) {
+					if (lighting_states.state[i] == 2) {
 						led_control.color = led_control_s::COLOR_WHITE;
 						led_control.mode = led_control_s::MODE_ON;
 					}
 
-					if (led_states.state[i] == 3) {
+					if (lighting_states.state[i] == 3) {
 						led_control.color = led_control_s::COLOR_YELLOW;
 						led_control.mode = led_control_s::MODE_BLINK_NORMAL;
 						led_control.num_blinks = 0;
 					}
 
-					if (led_states.state[i] == 4) {
+					if (lighting_states.state[i] == 4) {
 						led_control.color = led_control_s::COLOR_YELLOW;
 						led_control.mode = led_control_s::MODE_BREATHE;
 						led_control.num_blinks = 0;
@@ -210,10 +210,10 @@ void LedStateModule::run()
 		parameters_update();
 	}
 
-	orb_unsubscribe(led_states_sub);
+	orb_unsubscribe(lighting_states_sub);
 }
 
-void LedStateModule::parameters_update(bool force)
+void LightingStateConverter::parameters_update(bool force)
 {
 	// check for parameter updates
 	if (_parameter_update_sub.updated() || force) {
@@ -226,7 +226,7 @@ void LedStateModule::parameters_update(bool force)
 	}
 }
 
-int LedStateModule::print_usage(const char *reason)
+int LightingStateConverter::print_usage(const char *reason)
 {
 	if (reason) {
 		PX4_WARN("%s\n", reason);
@@ -257,7 +257,7 @@ $ module start -f -p 42
 	return 0;
 }
 
-int led_state_module_main(int argc, char *argv[])
+int lighting_state_converter_main(int argc, char *argv[])
 {
-	return LedStateModule::main(argc, argv);
+	return LightingStateConverter::main(argc, argv);
 }

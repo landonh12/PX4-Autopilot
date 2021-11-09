@@ -32,56 +32,56 @@
  ****************************************************************************/
 
 /**
- * @file led_states.hpp
+ * @file lighting_states.hpp
  *
- * Defines uORB over UAVCANv1 led_states subscriber
+ * Defines uORB over UAVCANv1 lighting_states subscriber
  *
  * @author Peter van der Perk <peter.vanderperk@nxp.com>
  */
 
 #pragma once
 
-#include <uORB/topics/led_states.h>
+#include <uORB/topics/lighting_states.h>
 #include <uORB/PublicationMulti.hpp>
 
 #include "../DynamicPortSubscriber.hpp"
 
-class UORB_over_UAVCAN_led_states_Subscriber : public UavcanDynamicPortSubscriber
+class UORB_over_UAVCAN_lighting_states_Subscriber : public UavcanDynamicPortSubscriber
 {
 public:
-	UORB_over_UAVCAN_led_states_Subscriber(CanardInstance &ins, UavcanParamManager &pmgr, uint8_t instance = 0) :
-		UavcanDynamicPortSubscriber(ins, pmgr, "led_states", instance) { };
+	UORB_over_UAVCAN_lighting_states_Subscriber(CanardInstance &ins, UavcanParamManager &pmgr, uint8_t instance = 0) :
+		UavcanDynamicPortSubscriber(ins, pmgr, "lighting_states", instance) { };
 
 	void subscribe() override
 	{
-		// Subscribe to messages uORB led_states payload over UAVCAN
+		// Subscribe to messages uORB lighting_states payload over UAVCAN
 		canardRxSubscribe(&_canard_instance,
 				  CanardTransferKindMessage,
 				  _subj_sub._canard_sub.port_id,
-				  sizeof(struct led_states_s),
+				  sizeof(struct lighting_states_s),
 				  CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC * 10000,
 				  &_subj_sub._canard_sub);
 	};
 
 	void callback(const CanardTransfer &receive) override
 	{
-		PX4_INFO("uORB led_states Callback");
+		PX4_INFO("uORB lighting_states Callback");
 
-		if (receive.payload_size == sizeof(struct led_states_s)) {
-			led_states_s *led_states_msg = (led_states_s *)receive.payload;
-			led_states_msg->timestamp = hrt_absolute_time();
+		if (receive.payload_size == sizeof(struct lighting_states_s)) {
+			lighting_states_s *lighting_states_msg = (lighting_states_s *)receive.payload;
+			lighting_states_msg->timestamp = hrt_absolute_time();
 
 			/* As long as we don't have timesync between nodes we set the timestamp to the current time */
 
-			_led_states_pub.publish(*led_states_msg);
+			_lighting_states_pub.publish(*lighting_states_msg);
 
 		} else {
 			PX4_ERR("uORB over UAVCAN %s playload size mismatch got %d expected %d",
-				_subj_sub._subject_name, receive.payload_size, sizeof(struct led_states_s));
+				_subj_sub._subject_name, receive.payload_size, sizeof(struct lighting_states_s));
 		}
 	};
 
 private:
-	uORB::PublicationMulti<led_states_s> _led_states_pub{ORB_ID(led_states)};
+	uORB::PublicationMulti<lighting_states_s> _lighting_states_pub{ORB_ID(lighting_states)};
 
 };

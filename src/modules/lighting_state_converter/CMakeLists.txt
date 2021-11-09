@@ -32,9 +32,9 @@
 ############################################################################
 
 px4_add_module(
-	MODULE modules__led_state_module
-	MAIN led_state_module
+	MODULE modules__lighting_state_converter
+	MAIN lighting_state_converter
 	SRCS
-		led_state_module.cpp
+		lighting_state_converter.cpp
 	)
 

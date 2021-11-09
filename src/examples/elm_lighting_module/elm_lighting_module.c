@@ -32,7 +32,7 @@
  ****************************************************************************/
 
 /**
- * @file led_control_example.c
+ * @file elm_lighting_module.c
  * Minimal application example for PX4 autopilot
  *
  * @author Landon Haugh <landon.haugh@nxp.com>
@@ -48,86 +48,86 @@
 #include <math.h>
 
 #include <uORB/uORB.h>
-#include <uORB/topics/led_states.h>
+#include <uORB/topics/lighting_states.h>
 
-__EXPORT int led_control_example_main(int argc, char *argv[]);
+__EXPORT int elm_lighting_module_main(int argc, char *argv[]);
 
-int led_control_example_main(int argc, char *argv[])
+int elm_lighting_module_main(int argc, char *argv[])
 {
 	PX4_INFO("Hello Sky!");
 
-	/* advertise led_states topic */
-	struct led_states_s led_states;
-	memset(&led_states, 255, sizeof(led_states));
-	orb_advert_t led_states_pub = orb_advertise(ORB_ID(led_states), &led_states);
+	/* advertise lighting_states topic */
+	struct lighting_states_s lighting_states;
+	memset(&lighting_states, 255, sizeof(lighting_states));
+	orb_advert_t lighting_states_pub = orb_advertise(ORB_ID(lighting_states), &lighting_states);
 
 /*
 	for (int i = 0; i < 8; i++) {
-		led_states.state[i] = 255;
+		lighting_states.state[i] = 255;
 	}
 */
     px4_usleep(2000000);
 
     // Idle state
     printf("Updating state to IDLE\n");
-    led_states.state[0] = 0;
-    led_states.state[1] = 0;
-    led_states.timestamp = hrt_absolute_time();
-    orb_publish(ORB_ID(led_states), led_states_pub, &led_states);
+    lighting_states.state[0] = 0;
+    lighting_states.state[1] = 0;
+    lighting_states.timestamp = hrt_absolute_time();
+    orb_publish(ORB_ID(lighting_states), lighting_states_pub, &lighting_states);
     px4_usleep(2000000);
     
 
     // Braking state (NO OTHER STATES)
     printf("Updating state to BRAKE\n");
-    led_states.state[0] = 1;
-    led_states.state[1] = 1;
-    led_states.timestamp = hrt_absolute_time();
-    orb_publish(ORB_ID(led_states), led_states_pub, &led_states);
+    lighting_states.state[0] = 1;
+    lighting_states.state[1] = 1;
+    lighting_states.timestamp = hrt_absolute_time();
+    orb_publish(ORB_ID(lighting_states), lighting_states_pub, &lighting_states);
     px4_usleep(2000000); 
     
 
     // Idle state while reversing
     printf("Updating state to IDLE/REVERSE\n");
-    led_states.state[0] = 0;
-    led_states.state[1] = 2;
-    led_states.timestamp = hrt_absolute_time();
-    orb_publish(ORB_ID(led_states), led_states_pub, &led_states);
+    lighting_states.state[0] = 0;
+    lighting_states.state[1] = 2;
+    lighting_states.timestamp = hrt_absolute_time();
+    orb_publish(ORB_ID(lighting_states), lighting_states_pub, &lighting_states);
     px4_usleep(2000000);
     
 
     // Braking state while reversing
     printf("Updating state to BRAKE/REVERSE\n");
-    led_states.state[0] = 1;
-    led_states.state[1] = 2;
-    led_states.timestamp = hrt_absolute_time();
-    orb_publish(ORB_ID(led_states), led_states_pub, &led_states);
+    lighting_states.state[0] = 1;
+    lighting_states.state[1] = 2;
+    lighting_states.timestamp = hrt_absolute_time();
+    orb_publish(ORB_ID(lighting_states), lighting_states_pub, &lighting_states);
     px4_usleep(2000000);
     
 
     // Idle state while turning
     printf("Updating state to IDLE/TURN\n");
-    led_states.state[0] = 0;
-    led_states.state[1] = 3;
-    led_states.timestamp = hrt_absolute_time();
-    orb_publish(ORB_ID(led_states), led_states_pub, &led_states);
+    lighting_states.state[0] = 0;
+    lighting_states.state[1] = 3;
+    lighting_states.timestamp = hrt_absolute_time();
+    orb_publish(ORB_ID(lighting_states), lighting_states_pub, &lighting_states);
     px4_usleep(2000000);
     
 
     // Braking state while turning
     printf("Updating state to BRAKE/TURN\n");
-    led_states.state[0] = 1;
-    led_states.state[1] = 3;
-    led_states.timestamp = hrt_absolute_time();
-    orb_publish(ORB_ID(led_states), led_states_pub, &led_states);
+    lighting_states.state[0] = 1;
+    lighting_states.state[1] = 3;
+    lighting_states.timestamp = hrt_absolute_time();
+    orb_publish(ORB_ID(lighting_states), lighting_states_pub, &lighting_states);
     px4_usleep(2000000);
     
 
     // Return to Idle
     printf("Updating state to IDLE\n");
-    led_states.state[0] = 0;
-    led_states.state[1] = 0;
-    led_states.timestamp = hrt_absolute_time();
-    orb_publish(ORB_ID(led_states), led_states_pub, &led_states);
+    lighting_states.state[0] = 0;
+    lighting_states.state[1] = 0;
+    lighting_states.timestamp = hrt_absolute_time();
+    orb_publish(ORB_ID(lighting_states), lighting_states_pub, &lighting_states);
     px4_usleep(2000000);
     
 

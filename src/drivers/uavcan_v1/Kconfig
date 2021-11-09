@@ -64,8 +64,8 @@ if DRIVERS_UAVCAN_V1
             bool "uORB sensor_gps publisher"
             default n
 
-        config UAVCAN_V1_UORB_LED_STATES_PUBLISHER
-            bool "uORB led_states publisher"
+        config UAVCAN_V1_UORB_LIGHTING_STATES_PUBLISHER
+            bool "uORB lighting_states publisher"
             default n
 
     endmenu
@@ -92,8 +92,8 @@ if DRIVERS_UAVCAN_V1
             bool "uORB sensor_gps Subscriber"
             default n
 
-        config UAVCAN_V1_UORB_LED_STATES_SUBSCRIBER
-            bool "uORB led_states Subscriber"
+        config UAVCAN_V1_UORB_LIGHTING_STATES_SUBSCRIBER
+            bool "uORB lighting_states Subscriber"
             default n
     endmenu
 

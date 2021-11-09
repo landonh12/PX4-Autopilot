@@ -97,7 +97,7 @@ set(msg_files
 	landing_target_innovations.msg
 	landing_target_pose.msg
 	led_control.msg
-	led_states.msg
+	lighting_states.msg
 	log_message.msg
 	logger_status.msg
 	mag_worker_data.msg

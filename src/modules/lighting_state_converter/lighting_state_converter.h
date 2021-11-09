@@ -38,26 +38,26 @@
 #include <uORB/Publication.hpp>
 #include <uORB/SubscriptionInterval.hpp>
 #include <uORB/topics/parameter_update.h>
-#include <uORB/topics/led_states.h>
+#include <uORB/topics/lighting_states.h>
 #include <uORB/topics/led_control.h>
 
 using namespace time_literals;
 
-extern "C" __EXPORT int led_state_module_main(int argc, char *argv[]);
+extern "C" __EXPORT int lighting_state_converter_main(int argc, char *argv[]);
 
 
-class LedStateModule : public ModuleBase<LedStateModule>, public ModuleParams
+class LightingStateConverter : public ModuleBase<LightingStateConverter>, public ModuleParams
 {
 public:
-	LedStateModule(int example_param, bool example_flag);
+	LightingStateConverter(int example_param, bool example_flag);
 
-	virtual ~LedStateModule() = default;
+	virtual ~LightingStateConverter() = default;
 
 	/** @see ModuleBase */
 	static int task_spawn(int argc, char *argv[]);
 
 	/** @see ModuleBase */
-	static LedStateModule *instantiate(int argc, char *argv[]);
+	static LightingStateConverter *instantiate(int argc, char *argv[]);
 
 	/** @see ModuleBase */
 	static int custom_command(int argc, char *argv[]);
@@ -90,7 +90,7 @@ private:
 	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
 
 	uORB::Publication<led_control_s> _led_control_pub{ORB_ID(led_control)};
-	uORB::Subscription _led_states_sub{ORB_ID(led_states)};
+	uORB::Subscription _lighting_states_sub{ORB_ID(lighting_states)};
 
 };
 

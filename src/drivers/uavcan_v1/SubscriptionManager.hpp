@@ -61,8 +61,8 @@
 #define CONFIG_UAVCAN_V1_UORB_SENSOR_GPS_SUBSCRIBER 0
 #endif
 
-#ifndef CONFIG_UAVCAN_V1_UORB_LED_STATES_SUBSCRIBER
-#define CONFIG_UAVCAN_V1_UORB_LED_STATES_SUBSCRIBER 0
+#ifndef CONFIG_UAVCAN_V1_UORB_LIGHTING_STATES_SUBSCRIBER
+#define CONFIG_UAVCAN_V1_UORB_LIGHTING_STATES_SUBSCRIBER 0
 #endif
 
 /* Preprocessor calculation of Subscribers count */
@@ -72,7 +72,7 @@
 	CONFIG_UAVCAN_V1_GNSS_SUBSCRIBER_1 + \
 	CONFIG_UAVCAN_V1_BMS_SUBSCRIBER + \
 	CONFIG_UAVCAN_V1_UORB_SENSOR_GPS_SUBSCRIBER + \
-	CONFIG_UAVCAN_V1_UORB_LED_STATES_SUBSCRIBER
+	CONFIG_UAVCAN_V1_UORB_LIGHTING_STATES_SUBSCRIBER
 
 #include <px4_platform_common/defines.h>
 #include <drivers/drv_hrt.h>
@@ -88,7 +88,7 @@
 #include "Subscribers/DS-015/Gnss.hpp"
 #include "Subscribers/legacy/LegacyBatteryInfo.hpp"
 #include "Subscribers/uORB/sensor_gps.hpp"
-#include "Subscribers/uORB/led_states.hpp"
+#include "Subscribers/uORB/lighting_states.hpp"
 
 typedef struct {
 	UavcanDynamicPortSubscriber *(*create_sub)(CanardInstance &ins, UavcanParamManager &pmgr) {};
@@ -184,13 +184,13 @@ private:
 			0
 		},
 #endif
-#if CONFIG_UAVCAN_V1_UORB_LED_STATES_SUBSCRIBER
+#if CONFIG_UAVCAN_V1_UORB_LIGHTING_STATES_SUBSCRIBER
 		{
 			[](CanardInstance & ins, UavcanParamManager & pmgr) -> UavcanDynamicPortSubscriber *
 			{
-				return new UORB_over_UAVCAN_led_states_Subscriber(ins, pmgr, 0);
+				return new UORB_over_UAVCAN_lighting_states_Subscriber(ins, pmgr, 0);
 			},
-			"led_states",
+			"lighting_states",
 			0
 		},
 #endif

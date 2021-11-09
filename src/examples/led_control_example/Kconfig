@@ -1,5 +1,0 @@
-menuconfig EXAMPLES_LED_CONTROL_EXAMPLE
-	bool "led_control_example"
-	default n
-	---help---
-		Enable support for led_control_example

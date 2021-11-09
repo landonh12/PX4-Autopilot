@@ -180,7 +180,7 @@ PARAM_DEFINE_INT32(UCAN1_SERVO_PUB, -1);
 PARAM_DEFINE_INT32(UCAN1_ACTR_PUB, -1);
 
 /**
- * led_states uORB over UAVCAN v1 publication port ID.
+ * lighting_states uORB over UAVCAN v1 publication port ID.
  *
  * @min -1
  * @max 6143
@@ -189,7 +189,7 @@ PARAM_DEFINE_INT32(UCAN1_ACTR_PUB, -1);
 PARAM_DEFINE_INT32(UCAN1_STATES_PUB, -1);
 
 /**
- * led_states uORB over UAVCAN v1 subscription port ID.
+ * lighting_states uORB over UAVCAN v1 subscription port ID.
  *
  * @min -1
  * @max 6143
@@ -198,7 +198,7 @@ PARAM_DEFINE_INT32(UCAN1_STATES_PUB, -1);
 PARAM_DEFINE_INT32(UCAN1_STATES_SUB, -1);
 
 /**
- * led_states uORB over UAVCAN v1 subscription port ID.
+ * lighting_states uORB over UAVCAN v1 subscription port ID.
  *
  * @min -1
  * @max 6143
