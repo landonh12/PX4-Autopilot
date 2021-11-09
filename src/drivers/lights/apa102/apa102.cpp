@@ -96,7 +96,7 @@ int APA102::task_spawn(int argc, char *argv[])
 	while ((ch = px4_getopt(argc, argv, "n:", &myoptind, &myoptarg)) != EOF) {
 		switch (ch) {
 		case 'n':
-			number_of_packages = atoi(myoptarg);
+			number_of_packages = atoi(myoptarg) + 1;
 
 			if (number_of_packages > BOARD_MAX_LEDS) {
 				number_of_packages = BOARD_MAX_LEDS;
@@ -186,7 +186,7 @@ void APA102::Run()
 	if (_led_controller.update(led_control_data) == 1) {
 
 		// Loop through each LED
-	    for (unsigned int led = 0; led < math::min(_number_of_packages, arraySize(led_control_data.leds)); led++) {
+	    for (unsigned int led = 1; led < math::min(_number_of_packages, arraySize(led_control_data.leds)); led++) {
 
 	    	// Set brightness
 	        uint8_t brightness = led_control_data.leds[led].brightness;
@@ -243,12 +243,12 @@ void APA102::Run()
 			 * 0xFFFFFFFF [end frame]
 			 */
 
-			for(uint8_t i = 0; i < _number_of_packages; i++)
+			for(uint8_t i = 1; i < _number_of_packages; i++)
 			{
-				buf[4+(4*i)] = 0b11100000 + brightness;
-				buf[5+(4*i)] = _leds[i].B();
-				buf[6+(4*i)] = _leds[i].G();
-				buf[7+(4*i)] = _leds[i].R();
+				buf[4+(4*(i-1))] = 0b11100000 + brightness;
+				buf[5+(4*(i-1))] = _leds[i].B();
+				buf[6+(4*(i-1))] = _leds[i].G();
+				buf[7+(4*(i-1))] = _leds[i].R();
 			} // end FOR loop
 
 			// Fill with end frame

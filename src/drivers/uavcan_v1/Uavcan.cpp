@@ -37,7 +37,7 @@
 #include <lib/version/version.h>
 
 
-#ifdef CONFIG_UAVCAN_V1_APP_DESCRIPTOR
+//#ifdef CONFIG_UAVCAN_V1_APP_DESCRIPTOR
 #include "boot_app_shared.h"
 /*
  * This is the AppImageDescriptor used
@@ -56,7 +56,7 @@ boot_app_shared_section app_descriptor_t AppDescriptor = {
 	.board_id = HW_VERSION_MAJOR << 8 | HW_VERSION_MINOR,
 	.reserved = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
 };
-#endif
+//#endif
 
 using namespace time_literals;
 
@@ -257,7 +257,7 @@ void UavcanNode::Run()
 	//printf("result: %d\n", _can_interface->receive(&received_frame));
 
 	while (!_task_should_exit.load() && _can_interface->receive(&received_frame) > 0) {
-		PX4_INFO("Entered the while loop");
+		//PX4_INFO("Entered the while loop");
 		CanardTransfer receive{};
 		CanardRxSubscription *subscription = nullptr;
 		int32_t result = canardRxAccept2(&_canard_instance, &received_frame, 0, &receive, &subscription);
@@ -271,7 +271,7 @@ void UavcanNode::Run()
 
 		} else if (result == 1) {
 			// A transfer has been received, process it.
-			PX4_INFO("received Port ID: %d", receive.port_id);
+			//PX4_INFO("received Port ID: %d", receive.port_id);
 
 			if (subscription != nullptr) {
 				UavcanBaseSubscriber *sub_instance = (UavcanBaseSubscriber *)subscription->user_reference;

@@ -171,8 +171,8 @@ void LightingStateConverter::run()
 			for (int i = 0; i < 2; i++) {
 				if (lighting_states.state[i] != 255) {
 					led_control_s led_control;
-					if(i == 0) led_control.led_mask = 0b0000001111000001;
-					if(i == 1) led_control.led_mask = 0b0000000000111110;
+					if(i == 0) led_control.led_mask = 0b0000011110000010;
+					if(i == 1) led_control.led_mask = 0b0000000001111100;
 
 					if (lighting_states.state[i] == 0) {
 						led_control.color = led_control_s::COLOR_DIM_RED;
