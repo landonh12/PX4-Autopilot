@@ -5,3 +5,6 @@
 
 rgbled_pwm start
 safety_button start
+ifup can0
+uavcan_v1 start
+elm_lighting_module

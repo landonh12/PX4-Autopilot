@@ -147,6 +147,8 @@ void LightingStateConverter::run()
 	// initialize parameters
 	parameters_update(true);
 
+	_lighting_id_no = _param_lighting_id_no.get();
+
 	while (!should_exit()) {
 
 		// wait for up to 1000ms for data
@@ -168,11 +170,17 @@ void LightingStateConverter::run()
 			orb_copy(ORB_ID(lighting_states), lighting_states_sub, &lighting_states);
 			// TODO: do something with the data...
 
-			for (int i = 0; i < 2; i++) {
+			printf("Received state data. Contents: \n");
+			for(int i = 0; i < 10; i++) {
+				printf("ID: %d State: %d\n", i, lighting_states.state[i]);
+			}
+
+			for (int i = (_lighting_id_no - 1)*2; i < (_lighting_id_no*2); i++) {
+				printf("_lighting_id_no: %d\n", i);
 				if (lighting_states.state[i] != 255) {
 					led_control_s led_control;
-					if(i == 0) led_control.led_mask = 0b0000011110000010;
-					if(i == 1) led_control.led_mask = 0b0000000001111100;
+					if(i == (_lighting_id_no - 1)*2) led_control.led_mask = 0b0000011110000010;
+					if(i == (_lighting_id_no*2)-1) led_control.led_mask = 0b0000000001111100;
 
 					if (lighting_states.state[i] == 0) {
 						led_control.color = led_control_s::COLOR_DIM_RED;

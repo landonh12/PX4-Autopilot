@@ -8,4 +8,5 @@ pwm_out mode_pwm1 start
 rgbled_pwm start
 apa102 start -n 10
 lighting_state_converter start
-elm_lighting_module
+uavcan_v1 start
+#elm_lighting_module

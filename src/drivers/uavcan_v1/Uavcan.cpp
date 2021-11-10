@@ -37,7 +37,7 @@
 #include <lib/version/version.h>
 
 
-//#ifdef CONFIG_UAVCAN_V1_APP_DESCRIPTOR
+#ifdef CONFIG_UAVCAN_V1_APP_DESCRIPTOR
 #include "boot_app_shared.h"
 /*
  * This is the AppImageDescriptor used
@@ -56,7 +56,7 @@ boot_app_shared_section app_descriptor_t AppDescriptor = {
 	.board_id = HW_VERSION_MAJOR << 8 | HW_VERSION_MINOR,
 	.reserved = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
 };
-//#endif
+#endif
 
 using namespace time_literals;
 
@@ -285,7 +285,7 @@ void UavcanNode::Run()
 			_canard_instance.memory_free(&_canard_instance, (void *)receive.payload);
 
 		} else {
-			PX4_INFO("RX canard %ld", result);
+			//PX4_INFO("RX canard %ld", result);
 		}
 	}
 
