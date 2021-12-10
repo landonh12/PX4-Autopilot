@@ -55,8 +55,16 @@ int ExtremeSwitch::init()
 	}
 	*/
 
+	int ret = SPI::init();
+
+	if(ret != OK) {
+		printf("SPI::init() failed\n");
+		DEVICE_DEBUG("SPI Init Failed");
+		return -EIO;
+	}
+
 	// alternatively, Run on fixed interval
-	ScheduleOnInterval(5000_us); // 2000 us interval, 200 Hz rate
+	ScheduleOnInterval(10000_us); // 2000 us interval, 200 Hz rate
 
 	return PX4_OK;
 }
@@ -75,11 +83,29 @@ void ExtremeSwitch::Run()
 	uint8_t buf;
 	uint8_t rbuf;
 
+	printf("Starting loop\n\n");
+
+
+	printf("Transferring OCR register \n");
+	buf = 0b00000001;
+	transfer(&buf, &rbuf, sizeof(uint8_t));
+	printf("rbuf: 0x%X\n", rbuf);
+
+	px4_usleep(500000);
+
+	printf("Transferring ON command \n");
 	buf = 0b00010001;
 	transfer(&buf, &rbuf, sizeof(uint8_t));
+	printf("rbuf: 0x%X\n", rbuf);
+	
 	px4_usleep(100000);
+	
+	printf("Transferring OFF command \n");
 	buf = 0b00010000;
 	transfer(&buf, &rbuf, sizeof(uint8_t));
+	printf("rbuf: 0x%X\n", rbuf);
+
+	printf("Ending loop\n\n");
 
 	/*
 	 * Just send a few pulses to enable the switch
@@ -137,13 +163,13 @@ void ExtremeSwitch::Run()
 
 int ExtremeSwitch::task_spawn(int argc, char *argv[])
 {
-	ExtremeSwitch *instance = new ExtremeSwitch(1, 0, 4000000, SPIDEV_MODE0);
+	ExtremeSwitch *instance = new ExtremeSwitch(1, 0x10000000, 1000000, SPIDEV_MODE1);
 
 	if (instance) {
 		_object.store(instance);
 		_task_id = task_id_is_work_queue;
 
-		if (instance->init()) {
+		if (instance->init() == PX4_OK) {
 			return PX4_OK;
 		}
 
